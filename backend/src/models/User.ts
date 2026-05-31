@@ -1,4 +1,4 @@
-import { Schema, model } from "mongoose";
+import { Schema, model, type InferSchemaType } from "mongoose";
 
 const userSchema = new Schema(
   {
@@ -22,6 +22,6 @@ const userSchema = new Schema(
   { timestamps: true },
 );
 
-const User = model("User", userSchema);
-
-export default User;
+type AllUserAttributes = InferSchemaType<typeof userSchema>;
+export type UserAttributes = Omit<AllUserAttributes, "_id" | "createdAt" | "updatedAt">;
+export const User = model("User", userSchema);

@@ -11,12 +11,12 @@ export const signUpSchema = z.object({
       .string("Invalid first name")
       .trim()
       .min(2, "First name must be at least 2 characters long")
-      .max(30, "First name can't exceed 30 characters"),
+      .max(50, "First name can't exceed 50 characters"),
     lastName: z
       .string("Invalid last name")
       .trim()
       .min(2, "Last name must be at least 2 characters long")
-      .max(30, "Last name can't exceed 30 characters"),
+      .max(50, "Last name can't exceed 50 characters"),
     password: z
       .string("Invalid password")
       .min(6, "Password must be at least 6 characters long")
@@ -36,9 +36,8 @@ export const signInSchema = z.object({
     username: z
       .string()
       .trim()
-      .min(1, "Username is required")
       .min(3, "Username must be at least 3 characters long")
       .max(20, "Username can't exceed 20 characters"),
-    password: z.string().min(1, "Password is required").min(6, "Password must be at least 6 characters long"),
+    password: z.string().min(6, "Password must be at least 6 characters long"),
   }),
 });

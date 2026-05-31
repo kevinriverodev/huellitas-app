@@ -4,7 +4,7 @@ dotenv.config();
 import server from "./config/server-config.js";
 import MongooseConnection from "./models/MongooseConnection.js";
 
-// Uso de servidor DNS público para resolver bloqueo de DNS en desarrollo para la base de datos
+// Uso de servidor DNS público para resolver bloqueo de DNS de la base de datos en desarrollo
 if (process.env.DEV_DNS) dns.setServers([process.env.DEV_DNS]);
 
 const main = async () => {

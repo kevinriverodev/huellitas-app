@@ -2,7 +2,7 @@ import { type Request, type Response } from "express";
 import bcrypt from "bcrypt";
 import generateJWT from "../helpers/generate-jwt.js";
 import { sendError, sendSuccess } from "../helpers/response.js";
-import User from "../models/User.js";
+import { User } from "../models/User.js";
 
 export const signUp = async (req: Request, res: Response) => {
   const { username, firstName, lastName, password, email, biography, imageURL } = req.body;
@@ -12,10 +12,7 @@ export const signUp = async (req: Request, res: Response) => {
       $or: [{ username }, { email }],
     });
 
-    if (userExist) {
-      sendError(res, "User already registered", 400);
-      return;
-    }
+    if (userExist) return sendError(res, "User already registered", 400);
 
     const salt = bcrypt.genSaltSync();
     const hash = bcrypt.hashSync(password, salt);
@@ -36,7 +33,7 @@ export const signUp = async (req: Request, res: Response) => {
 
     res.cookie("token", token, { httpOnly: true, sameSite: "none", secure: true });
 
-    sendSuccess(
+    return sendSuccess(
       res,
       {
         username: user.username,
@@ -47,7 +44,7 @@ export const signUp = async (req: Request, res: Response) => {
     );
   } catch (error) {
     console.log("Server error: ", error);
-    sendError(res, "An unexpected error occured", 500);
+    return sendError(res, "An unexpected error occurred", 500);
   }
 };
 
@@ -59,26 +56,17 @@ export const signIn = async (req: Request, res: Response) => {
       $or: [{ username }, { email: username }],
     });
 
-    if (!user) {
-      sendError(res, "Invalid credentials", 401);
-      return;
-    }
+    if (!user) return sendError(res, "Invalid credentials", 401);
 
-    if (!bcrypt.compareSync(password, user.password)) {
-      sendError(res, "Invalid credentials", 401);
-      return;
-    }
+    if (!bcrypt.compareSync(password, user.password)) return sendError(res, "Invalid credentials", 401);
 
-    if (!user.status) {
-      sendError(res, "Inactive user", 401);
-      return;
-    }
+    if (!user.status) return sendError(res, "Inactive user", 401);
 
     const token = await generateJWT(user.id);
 
     res.cookie("token", token, { httpOnly: true, sameSite: "none", secure: true });
 
-    sendSuccess(
+    return sendSuccess(
       res,
       {
         username: user.username,
@@ -89,6 +77,6 @@ export const signIn = async (req: Request, res: Response) => {
     );
   } catch (error) {
     console.log("Server error: ", error);
-    sendError(res, "An unexpected error ocurred", 500);
+    return sendError(res, "An unexpected error occurred", 500);
   }
 };
